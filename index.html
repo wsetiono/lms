@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduLearn - Learning Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --light-color: #f8f9fc;
+            --dark-color: #5a5c69;
+        }
+
+        body {
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fc;
+            color: #5a5c69;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            z-index: 100;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1rem 1.5rem;
+            border-radius: 0.35rem;
+            margin: 0.25rem 0;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 0.5rem;
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header {
+            background-color: white;
+            border-bottom: 1px solid #e3e6f0;
+            font-weight: 700;
+            color: #5a5c69;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #2e59d9;
+            border-color: #2653d4;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+        }
+
+        .progress {
+            height: 0.75rem;
+        }
+
+        .table {
+            color: #5a5c69;
+        }
+
+        .login-container {
+            max-width: 450px;
+            margin: 100px auto;
+        }
+
+        .login-logo {
+            font-size: 3rem;
+            color: var(--primary-color);
+        }
+
+        .course-card {
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .course-thumbnail {
+            height: 200px;
+            object-fit: cover;
+            border-radius: 0.35rem 0.35rem 0 0;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .badge-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .badge-item {
+            display: flex;
+            align-items: center;
+            background-color: #f8f9fc;
+            border-radius: 0.35rem;
+            padding: 0.5rem;
+            box-shadow: 0 0.15rem 0.35rem rgba(58, 59, 69, 0.1);
+        }
+
+        .badge-icon {
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+        }
+
+        .quiz-option {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .quiz-option:hover {
+            background-color: #f8f9fc;
+        }
+
+        .quiz-option.selected {
+            background-color: #e3f2fd;
+            border-color: var(--primary-color);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 0.35rem;
+            margin-bottom: 0.5rem;
+            background-color: white;
+            box-shadow: 0 0.15rem 0.35rem rgba(58, 59, 69, 0.1);
+        }
+
+        .leaderboard-rank {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-right: 1rem;
+            width: 40px;
+            text-align: center;
+        }
+
+        .leaderboard-rank.gold {
+            color: #FFD700;
+        }
+
+        .leaderboard-rank.silver {
+            color: #C0C0C0;
+        }
+
+        .leaderboard-rank.bronze {
+            color: #CD7F32;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+        }
+
+        .custom-toast {
+            min-width: 300px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                transition: left 0.3s;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="container">
+        <div class="login-container">
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-mortarboard-fill login-logo"></i>
+                        <h1 class="h4 text-gray-900 mb-2">Welcome to EduLearn</h1>
+                        <p class="mb-4">Your complete Learning Management System</p>
+                    </div>
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="email" placeholder="name@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Password" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">Remember Me</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                        <div class="text-center mt-3">
+                            <a href="#" id="showRegister">Don't have an account? Register</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Page -->
+    <div id="registerPage" class="container" style="display: none;">
+        <div class="login-container">
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-person-plus-fill login-logo"></i>
+                        <h1 class="h4 text-gray-900 mb-2">Create an Account</h1>
+                        <p class="mb-4">Join our learning community</p>
+                    </div>
+                    <form id="registerForm">
+                        <div class="mb-3">
+                            <label for="regName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="regName" placeholder="John Doe" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="regEmail" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="regEmail" placeholder="name@example.com" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="regPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="regPassword" placeholder="Password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="regRole" class="form-label">Role</label>
+                            <select class="form-select" id="regRole" required>
+                                <option value="learner">Learner</option>
+                                <option value="instructor">Instructor</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                        <div class="text-center mt-3">
+                            <a href="#" id="showLogin">Already have an account? Login</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboardPage" style="display: none;">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                    <div class="position-sticky pt-3">
+                        <div class="text-center mb-4">
+                            <h4 class="text-white">EduLearn</h4>
+                            <p class="text-white-50 small">LMS Dashboard</p>
+                        </div>
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#" data-section="dashboard">
+                                    <i class="bi bi-speedometer2"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="courses">
+                                    <i class="bi bi-book"></i> Courses
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="users" id="usersLink" style="display: none;">
+                                    <i class="bi bi-people"></i> Users & Roles
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="progress">
+                                    <i class="bi bi-graph-up"></i> Progress & Reports
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="assessments">
+                                    <i class="bi bi-clipboard-check"></i> Assessments
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="content">
+                                    <i class="bi bi-file-earmark-arrow-up"></i> Content
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="gamification">
+                                    <i class="bi bi-trophy"></i> Gamification
+                                </a>
+                            </li>
+                            <li class="nav-item mt-4">
+                                <a class="nav-link" href="#" id="logoutBtn">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <!-- Main Content -->
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                        <h1 class="h2" id="pageTitle">Dashboard</h1>
+                        <div class="btn-toolbar mb-2 mb-md-0">
+                            <div class="btn-group me-2">
+                                <button type="button" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-bell"></i>
+                                    <span class="notification-badge">3</span>
+                                </button>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <img src="https://picsum.photos/seed/user123/40/40.jpg" alt="User" class="user-avatar me-2">
+                                    <span id="currentUser">John Doe</span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" href="#">Profile</a></li>
+                                    <li><a class="dropdown-item" href="#">Settings</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#" id="logoutDropdown">Logout</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Section -->
+                    <div id="dashboardSection" class="content-section active">
+                        <div class="row">
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Courses</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="totalCourses">12</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="bi bi-book-fill fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-success shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Completed</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="completedCourses">5</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="bi bi-check-circle-fill fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-info shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">In Progress</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="inProgressCourses">3</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="bi bi-clock-fill fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="card border-left-warning shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Points</div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="userPoints">850</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="bi bi-star-fill fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">Learning Progress</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="progressChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">Recent Activity</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="list-group list-group-flush">
+                                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1">Completed Module: Introduction to JavaScript</h6>
+                                                    <small class="text-muted">2 hours ago</small>
+                                                </div>
+                                                <span class="badge bg-success rounded-pill">Completed</span>
+                                            </div>
+                                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1">Quiz Score: 85%</h6>
+                                                    <small class="text-muted">Yesterday</small>
+                                                </div>
+                                                <span class="badge bg-info rounded-pill">Quiz</span>
+                                            </div>
+                                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <h6 class="mb-1">Enrolled in: Advanced CSS Techniques</h6>
+                                                    <small class="text-muted">3 days ago</small>
+                                                </div>
+                                                <span class="badge bg-primary rounded-pill">New</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Courses Section -->
+                    <div id="coursesSection" class="content-section">
+                        <div class="d-flex justify-content-between mb-4">
+                            <h2>My Courses</h2>
+                            <button class="btn btn-primary" id="addCourseBtn" style="display: none;">
+                                <i class="bi bi-plus-circle"></i> Add New Course
+                            </button>
+                        </div>
+                        <div class="row" id="coursesList">
+                            <!-- Courses will be dynamically added here -->
+                        </div>
+                    </div>
+
+                    <!-- Users Section -->
+                    <div id="usersSection" class="content-section">
+                        <div class="d-flex justify-content-between mb-4">
+                            <h2>User Management</h2>
+                            <button class="btn btn-primary" id="addUserBtn">
+                                <i class="bi bi-plus-circle"></i> Add New User
+                            </button>
+                        </div>
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="usersTable">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Role</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Users will be dynamically added here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Section -->
+                    <div id="progressSection" class="content-section">
+                        <h2>Progress & Reports</h2>
+                        <div class="row">
+                            <div class="col-lg-8 mb-4">
+                                <div class="card shadow">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">Learning Progress Overview</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="chart-container">
+                                            <canvas id="progressOverviewChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 mb-4">
+                                <div class="card shadow">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">Course Completion</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="courseCompletionList">
+                                            <!-- Course completion items will be dynamically added here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Detailed Progress Report</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Course</th>
+                                                <th>Progress</th>
+                                                <th>Time Spent</th>
+                                                <th>Last Activity</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="progressTableBody">
+                                            <!-- Progress data will be dynamically added here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assessments Section -->
+                    <div id="assessmentsSection" class="content-section">
+                        <div class="d-flex justify-content-between mb-4">
+                            <h2>Assessments & Certifications</h2>
+                            <button class="btn btn-primary" id="addAssessmentBtn" style="display: none;">
+                                <i class="bi bi-plus-circle"></i> Create Assessment
+                            </button>
+                        </div>
+                        <div class="row" id="assessmentsList">
+                            <!-- Assessments will be dynamically added here -->
+                        </div>
+                    </div>
+
+                    <!-- Content Section -->
+                    <div id="contentSection" class="content-section">
+                        <div class="d-flex justify-content-between mb-4">
+                            <h2>Content Management</h2>
+                            <button class="btn btn-primary" id="uploadContentBtn">
+                                <i class="bi bi-cloud-upload"></i> Upload Content
+                            </button>
+                        </div>
+                        <div class="card shadow">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>Size</th>
+                                                <th>Upload Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="contentTableBody">
+                                            <!-- Content items will be dynamically added here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gamification Section -->
+                    <div id="gamificationSection" class="content-section">
+                        <h2>Gamification</h2>
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">My Badges</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="badge-container" id="userBadges">
+                                            <!-- Badges will be dynamically added here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 mb-4">
+                                <div class="card shadow">
+                                    <div class="card-header py-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">Leaderboard</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="leaderboardList">
+                                            <!-- Leaderboard items will be dynamically added here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Points History</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Activity</th>
+                                                <th>Points Earned</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="pointsHistoryTable">
+                                            <!-- Points history will be dynamically added here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Modal -->
+    <div class="modal fade" id="courseModal" tabindex="-1" aria-labelledby="courseModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="courseModalLabel">Add New Course</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="courseForm">
+                        <div class="mb-3">
+                            <label for="courseTitle" class="form-label">Course Title</label>
+                            <input type="text" class="form-control" id="courseTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="courseDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="courseDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="courseCategory" class="form-label">Category</label>
+                            <select class="form-select" id="courseCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="programming">Programming</option>
+                                <option value="design">Design</option>
+                                <option value="business">Business</option>
+                                <option value="marketing">Marketing</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="courseDuration" class="form-label">Duration (hours)</label>
+                            <input type="number" class="form-control" id="courseDuration" min="1" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="courseDifficulty" class="form-label">Difficulty Level</label>
+                            <select class="form-select" id="courseDifficulty" required>
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveCourseBtn">Save Course</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel">Add New User</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm">
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="userName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userEmail" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="userEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="userPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userRole" class="form-label">Role</label>
+                            <select class="form-select" id="userRole" required>
+                                <option value="learner">Learner</option>
+                                <option value="instructor">Instructor</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveUserBtn">Save User</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assessment Modal -->
+    <div class="modal fade" id="assessmentModal" tabindex="-1" aria-labelledby="assessmentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assessmentModalLabel">Create Assessment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="assessmentForm">
+                        <div class="mb-3">
+                            <label for="assessmentTitle" class="form-label">Assessment Title</label>
+                            <input type="text" class="form-control" id="assessmentTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="assessmentCourse" class="form-label">Associated Course</label>
+                            <select class="form-select" id="assessmentCourse" required>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="assessmentType" class="form-label">Assessment Type</label>
+                            <select class="form-select" id="assessmentType" required>
+                                <option value="quiz">Quiz</option>
+                                <option value="exam">Exam</option>
+                                <option value="assignment">Assignment</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="assessmentDuration" class="form-label">Duration (minutes)</label>
+                            <input type="number" class="form-control" id="assessmentDuration" min="5" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="assessmentQuestions" class="form-label">Number of Questions</label>
+                            <input type="number" class="form-control" id="assessmentQuestions" min="1" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveAssessmentBtn">Create Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Modal -->
+    <div class="modal fade" id="quizModal" tabindex="-1" aria-labelledby="quizModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="quizModalLabel">Take Assessment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="quizContainer">
+                        <!-- Quiz questions will be dynamically added here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitQuizBtn">Submit Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Upload Modal -->
+    <div class="modal fade" id="contentUploadModal" tabindex="-1" aria-labelledby="contentUploadModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="contentUploadModalLabel">Upload Content</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="contentUploadForm">
+                        <div class="mb-3">
+                            <label for="contentName" class="form-label">Content Name</label>
+                            <input type="text" class="form-control" id="contentName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contentCourse" class="form-label">Associated Course</label>
+                            <select class="form-select" id="contentCourse" required>
+                                <!-- Options will be populated dynamically -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contentFile" class="form-label">Select File</label>
+                            <input type="file" class="form-control" id="contentFile" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="uploadContentSubmitBtn">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                showDashboard(currentUser);
+            }
+
+            // Initialize sample data if not exists
+            initializeSampleData();
+        });
+
+        // Initialize sample data
+        function initializeSampleData() {
+            if (!localStorage.getItem('users')) {
+                const users = [
+                    { id: 1, name: 'Admin User', email: 'admin@example.com', password: 'admin123', role: 'admin', status: 'active' },
+                    { id: 2, name: 'John Instructor', email: 'instructor@example.com', password: 'instructor123', role: 'instructor', status: 'active' },
+                    { id: 3, name: 'Jane Learner', email: 'learner@example.com', password: 'learner123', role: 'learner', status: 'active' }
+                ];
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+
+            if (!localStorage.getItem('courses')) {
+                const courses = [
+                    { id: 1, title: 'Introduction to JavaScript', description: 'Learn the basics of JavaScript programming', category: 'programming', duration: 10, difficulty: 'beginner', instructorId: 2, enrolledUsers: [3] },
+                    { id: 2, title: 'Advanced CSS Techniques', description: 'Master advanced CSS concepts and techniques', category: 'design', duration: 8, difficulty: 'intermediate', instructorId: 2, enrolledUsers: [3] },
+                    { id: 3, title: 'Digital Marketing Fundamentals', description: 'Essential concepts in digital marketing', category: 'marketing', duration: 12, difficulty: 'beginner', instructorId: 2, enrolledUsers: [3] }
+                ];
+                localStorage.setItem('courses', JSON.stringify(courses));
+            }
+
+            if (!localStorage.getItem('assessments')) {
+                const assessments = [
+                    { id: 1, title: 'JavaScript Basics Quiz', courseId: 1, type: 'quiz', duration: 30, questions: 10 },
+                    { id: 2, title: 'CSS Final Exam', courseId: 2, type: 'exam', duration: 60, questions: 20 }
+                ];
+                localStorage.setItem('assessments', JSON.stringify(assessments));
+            }
+
+            if (!localStorage.getItem('content')) {
+                const content = [
+                    { id: 1, name: 'JavaScript Intro PDF', courseId: 1, type: 'pdf', size: '2.5 MB', uploadDate: '2023-06-15' },
+                    { id: 2, name: 'CSS Video Tutorial', courseId: 2, type: 'video', size: '150 MB', uploadDate: '2023-06-10' }
+                ];
+                localStorage.setItem('content', JSON.stringify(content));
+            }
+
+            if (!localStorage.getItem('badges')) {
+                const badges = [
+                    { id: 1, name: 'Quick Learner', icon: 'bi-lightning-fill', color: '#FFD700', description: 'Complete 3 courses in a month' },
+                    { id: 2, name: 'Quiz Master', icon: 'bi-trophy-fill', color: '#C0C0C0', description: 'Score 90% or higher in 5 quizzes' },
+                    { id: 3, name: 'Dedicated Student', icon: 'bi-star-fill', color: '#CD7F32', description: 'Log in for 30 consecutive days' }
+                ];
+                localStorage.setItem('badges', JSON.stringify(badges));
+            }
+
+            if (!localStorage.getItem('userBadges')) {
+                const userBadges = [
+                    { userId: 3, badgeId: 1, earnedDate: '2023-06-20' },
+                    { userId: 3, badgeId: 2, earnedDate: '2023-06-18' }
+                ];
+                localStorage.setItem('userBadges', JSON.stringify(userBadges));
+            }
+
+            if (!localStorage.getItem('userPoints')) {
+                const userPoints = [
+                    { userId: 3, points: 850 }
+                ];
+                localStorage.setItem('userPoints', JSON.stringify(userPoints));
+            }
+
+            if (!localStorage.getItem('progress')) {
+                const progress = [
+                    { userId: 3, courseId: 1, progress: 75, timeSpent: 7.5, lastActivity: '2023-06-25', status: 'in-progress' },
+                    { userId: 3, courseId: 2, progress: 40, timeSpent: 3.2, lastActivity: '2023-06-24', status: 'in-progress' },
+                    { userId: 3, courseId: 3, progress: 100, timeSpent: 12, lastActivity: '2023-06-20', status: 'completed' }
+                ];
+                localStorage.setItem('progress', JSON.stringify(progress));
+            }
+        }
+
+        // Login/Register functionality
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                showDashboard(user);
+                showToast('Login successful', 'success');
+            } else {
+                showToast('Invalid email or password', 'danger');
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const role = document.getElementById('regRole').value;
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            
+            // Check if email already exists
+            if (users.find(u => u.email === email)) {
+                showToast('Email already exists', 'danger');
+                return;
+            }
+
+            const newUser = {
+                id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                name,
+                email,
+                password,
+                role,
+                status: 'active'
+            };
+
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+
+            // Initialize user points
+            const userPoints = JSON.parse(localStorage.getItem('userPoints')) || [];
+            userPoints.push({ userId: newUser.id, points: 0 });
+            localStorage.setItem('userPoints', JSON.stringify(userPoints));
+
+            showToast('Registration successful. Please login.', 'success');
+            document.getElementById('showLogin').click();
+        });
+
+        document.getElementById('showRegister').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('registerPage').style.display = 'block';
+        });
+
+        document.getElementById('showLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('registerPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'block';
+        });
+
+        // Logout functionality
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('currentUser');
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'block';
+            showToast('Logged out successfully', 'success');
+        });
+
+        document.getElementById('logoutDropdown').addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('currentUser');
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'block';
+            showToast('Logged out successfully', 'success');
+        });
+
+        // Show dashboard
+        function showDashboard(user) {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('registerPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'block';
+            document.getElementById('currentUser').textContent = user.name;
+
+            // Show/hide sections based on role
+            if (user.role === 'admin') {
+                document.getElementById('usersLink').style.display = 'block';
+                document.getElementById('addCourseBtn').style.display = 'inline-block';
+                document.getElementById('addAssessmentBtn').style.display = 'inline-block';
+            } else if (user.role === 'instructor') {
+                document.getElementById('usersLink').style.display = 'none';
+                document.getElementById('addCourseBtn').style.display = 'inline-block';
+                document.getElementById('addAssessmentBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('usersLink').style.display = 'none';
+                document.getElementById('addCourseBtn').style.display = 'none';
+                document.getElementById('addAssessmentBtn').style.display = 'none';
+            }
+
+            // Load dashboard data
+            loadDashboardData(user);
+            loadCourses(user);
+            loadUsers(user);
+            loadProgress(user);
+            loadAssessments(user);
+            loadContent(user);
+            loadGamification(user);
+
+            // Initialize charts
+            initializeCharts(user);
+        }
+
+        // Navigation
+        document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const section = this.getAttribute('data-section');
+                
+                // Update active nav
+                document.querySelectorAll('.nav-link').forEach(navLink => {
+                    navLink.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Show corresponding section
+                document.querySelectorAll('.content-section').forEach(contentSection => {
+                    contentSection.classList.remove('active');
+                });
+                document.getElementById(section + 'Section').classList.add('active');
+                
+                // Update page title
+                document.getElementById('pageTitle').textContent = this.textContent.trim();
+            });
+        });
+
+        // Load dashboard data
+        function loadDashboardData(user) {
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const progress = JSON.parse(localStorage.getItem('progress')) || [];
+            const userProgress = progress.filter(p => p.userId === user.id);
+            
+            let totalCourses = 0;
+            let completedCourses = 0;
+            let inProgressCourses = 0;
+            
+            if (user.role === 'learner') {
+                // For learners, count courses they're enrolled in
+                totalCourses = courses.filter(c => c.enrolledUsers && c.enrolledUsers.includes(user.id)).length;
+                completedCourses = userProgress.filter(p => p.status === 'completed').length;
+                inProgressCourses = userProgress.filter(p => p.status === 'in-progress').length;
+            } else if (user.role === 'instructor') {
+                // For instructors, count courses they're teaching
+                totalCourses = courses.filter(c => c.instructorId === user.id).length;
+                // For simplicity, we'll use the same progress counts for instructors
+                completedCourses = Math.floor(totalCourses * 0.4);
+                inProgressCourses = Math.floor(totalCourses * 0.6);
+            } else {
+                // For admins, count all courses
+                totalCourses = courses.length;
+                completedCourses = Math.floor(totalCourses * 0.3);
+                inProgressCourses = Math.floor(totalCourses * 0.5);
+            }
+            
+            document.getElementById('totalCourses').textContent = totalCourses;
+            document.getElementById('completedCourses').textContent = completedCourses;
+            document.getElementById('inProgressCourses').textContent = inProgressCourses;
+            
+            // Load user points
+            const userPoints = JSON.parse(localStorage.getItem('userPoints')) || [];
+            const points = userPoints.find(p => p.userId === user.id);
+            document.getElementById('userPoints').textContent = points ? points.points : 0;
+        }
+
+        // Load courses
+        function loadCourses(user) {
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const coursesList = document.getElementById('coursesList');
+            coursesList.innerHTML = '';
+            
+            let coursesToShow = [];
+            
+            if (user.role === 'learner') {
+                // Show courses the learner is enrolled in
+                coursesToShow = courses.filter(c => c.enrolledUsers && c.enrolledUsers.includes(user.id));
+            } else if (user.role === 'instructor') {
+                // Show courses the instructor is teaching
+                coursesToShow = courses.filter(c => c.instructorId === user.id);
+            } else {
+                // Show all courses for admin
+                coursesToShow = courses;
+            }
+            
+            coursesToShow.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.className = 'col-lg-4 col-md-6 mb-4';
+                courseCard.innerHTML = `
+                    <div class="card course-card h-100">
+                        <img src="https://picsum.photos/seed/course${course.id}/400/200.jpg" class="card-img-top course-thumbnail" alt="${course.title}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">${course.title}</h5>
+                            <p class="card-text">${course.description}</p>
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-primary">${course.category}</span>
+                                    <span class="badge bg-info">${course.difficulty}</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted"><i class="bi bi-clock"></i> ${course.duration} hours</small>
+                                    <button class="btn btn-sm btn-outline-primary view-course-btn" data-course-id="${course.id}">View</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                coursesList.appendChild(courseCard);
+            });
+            
+            // Add event listeners to view buttons
+            document.querySelectorAll('.view-course-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const courseId = parseInt(this.getAttribute('data-course-id'));
+                    viewCourse(courseId);
+                });
+            });
+        }
+
+        // View course details
+        function viewCourse(courseId) {
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const course = courses.find(c => c.id === courseId);
+            
+            if (course) {
+                showToast(`Viewing course: ${course.title}`, 'info');
+                // In a real application, this would navigate to a course detail page
+            }
+        }
+
+        // Load users
+        function loadUsers(user) {
+            if (user.role !== 'admin') return;
+            
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const usersTable = document.getElementById('usersTable');
+            const tbody = usersTable.querySelector('tbody');
+            tbody.innerHTML = '';
+            
+            users.forEach(u => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${u.id}</td>
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td><span class="badge bg-${u.role === 'admin' ? 'danger' : u.role === 'instructor' ? 'warning' : 'info'}">${u.role}</span></td>
+                    <td><span class="badge bg-${u.status === 'active' ? 'success' : 'secondary'}">${u.status}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary edit-user-btn" data-user-id="${u.id}">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger delete-user-btn" data-user-id="${u.id}">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-user-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const userId = parseInt(this.getAttribute('data-user-id'));
+                    editUser(userId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-user-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const userId = parseInt(this.getAttribute('data-user-id'));
+                    deleteUser(userId);
+                });
+            });
+        }
+
+        // Edit user
+        function editUser(userId) {
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => u.id === userId);
+            
+            if (user) {
+                document.getElementById('userName').value = user.name;
+                document.getElementById('userEmail').value = user.email;
+                document.getElementById('userRole').value = user.role;
+                
+                const userModal = new bootstrap.Modal(document.getElementById('userModal'));
+                userModal.show();
+                
+                // Change save button to update
+                document.getElementById('saveUserBtn').textContent = 'Update User';
+                document.getElementById('saveUserBtn').setAttribute('data-user-id', userId);
+            }
+        }
+
+        // Delete user
+        function deleteUser(userId) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                let users = JSON.parse(localStorage.getItem('users')) || [];
+                users = users.filter(u => u.id !== userId);
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                loadUsers(currentUser);
+                
+                showToast('User deleted successfully', 'success');
+            }
+        }
+
+        // Load progress
+        function loadProgress(user) {
+            const progress = JSON.parse(localStorage.getItem('progress')) || [];
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            
+            let progressToShow = [];
+            
+            if (user.role === 'learner') {
+                // Show learner's own progress
+                progressToShow = progress.filter(p => p.userId === user.id);
+            } else if (user.role === 'instructor') {
+                // Show progress of learners in instructor's courses
+                const instructorCourses = courses.filter(c => c.instructorId === user.id);
+                const instructorCourseIds = instructorCourses.map(c => c.id);
+                progressToShow = progress.filter(p => instructorCourseIds.includes(p.courseId));
+            } else {
+                // Show all progress for admin
+                progressToShow = progress;
+            }
+            
+            // Populate progress table
+            const progressTableBody = document.getElementById('progressTableBody');
+            progressTableBody.innerHTML = '';
+            
+            progressToShow.forEach(p => {
+                const course = courses.find(c => c.id === p.courseId);
+                if (course) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${course.title}</td>
+                        <td>
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" style="width: ${p.progress}%" aria-valuenow="${p.progress}" aria-valuemin="0" aria-valuemax="100">${p.progress}%</div>
+                            </div>
+                        </td>
+                        <td>${p.timeSpent} hours</td>
+                        <td>${p.lastActivity}</td>
+                        <td><span class="badge bg-${p.status === 'completed' ? 'success' : 'info'}">${p.status}</span></td>
+                    `;
+                    progressTableBody.appendChild(row);
+                }
+            });
+            
+            // Populate course completion list
+            const courseCompletionList = document.getElementById('courseCompletionList');
+            courseCompletionList.innerHTML = '';
+            
+            const completedCourses = progressToShow.filter(p => p.status === 'completed');
+            completedCourses.forEach(p => {
+                const course = courses.find(c => c.id === p.courseId);
+                if (course) {
+                    const item = document.createElement('div');
+                    item.className = 'd-flex justify-content-between align-items-center mb-2';
+                    item.innerHTML = `
+                        <div>
+                            <h6 class="mb-0">${course.title}</h6>
+                            <small class="text-muted">Completed on ${p.lastActivity}</small>
+                        </div>
+                        <span class="badge bg-success rounded-pill">100%</span>
+                    `;
+                    courseCompletionList.appendChild(item);
+                }
+            });
+            
+            if (completedCourses.length === 0) {
+                courseCompletionList.innerHTML = '<p class="text-muted">No completed courses yet.</p>';
+            }
+        }
+
+        // Load assessments
+        function loadAssessments(user) {
+            const assessments = JSON.parse(localStorage.getItem('assessments')) || [];
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const assessmentsList = document.getElementById('assessmentsList');
+            assessmentsList.innerHTML = '';
+            
+            let assessmentsToShow = [];
+            
+            if (user.role === 'learner') {
+                // Show assessments for courses the learner is enrolled in
+                const enrolledCourses = courses.filter(c => c.enrolledUsers && c.enrolledUsers.includes(user.id));
+                const enrolledCourseIds = enrolledCourses.map(c => c.id);
+                assessmentsToShow = assessments.filter(a => enrolledCourseIds.includes(a.courseId));
+            } else if (user.role === 'instructor') {
+                // Show assessments for courses the instructor is teaching
+                const instructorCourses = courses.filter(c => c.instructorId === user.id);
+                const instructorCourseIds = instructorCourses.map(c => c.id);
+                assessmentsToShow = assessments.filter(a => instructorCourseIds.includes(a.courseId));
+            } else {
+                // Show all assessments for admin
+                assessmentsToShow = assessments;
+            }
+            
+            assessmentsToShow.forEach(assessment => {
+                const course = courses.find(c => c.id === assessment.courseId);
+                if (course) {
+                    const assessmentCard = document.createElement('div');
+                    assessmentCard.className = 'col-lg-6 mb-4';
+                    assessmentCard.innerHTML = `
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">${assessment.title}</h5>
+                                <p class="card-text">Course: ${course.title}</p>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="badge bg-primary">${assessment.type}</span>
+                                    <span class="text-muted"><i class="bi bi-clock"></i> ${assessment.duration} minutes</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted"><i class="bi bi-question-circle"></i> ${assessment.questions} questions</span>
+                                    ${user.role === 'learner' ? 
+                                        `<button class="btn btn-sm btn-primary take-assessment-btn" data-assessment-id="${assessment.id}">Take Assessment</button>` :
+                                        `<button class="btn btn-sm btn-outline-secondary view-assessment-btn" data-assessment-id="${assessment.id}">View</button>`
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    assessmentsList.appendChild(assessmentCard);
+                }
+            });
+            
+            // Add event listeners to take assessment buttons
+            document.querySelectorAll('.take-assessment-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const assessmentId = parseInt(this.getAttribute('data-assessment-id'));
+                    takeAssessment(assessmentId);
+                });
+            });
+            
+            // Add event listeners to view assessment buttons
+            document.querySelectorAll('.view-assessment-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const assessmentId = parseInt(this.getAttribute('data-assessment-id'));
+                    viewAssessment(assessmentId);
+                });
+            });
+        }
+
+        // Take assessment
+        function takeAssessment(assessmentId) {
+            const assessments = JSON.parse(localStorage.getItem('assessments')) || [];
+            const assessment = assessments.find(a => a.id === assessmentId);
+            
+            if (assessment) {
+                // Generate sample questions
+                const quizContainer = document.getElementById('quizContainer');
+                quizContainer.innerHTML = '';
+                
+                for (let i = 1; i <= assessment.questions; i++) {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'mb-4';
+                    questionDiv.innerHTML = `
+                        <h6>Question ${i}: What is the correct answer to this question?</h6>
+                        <div class="form-check quiz-option">
+                            <input class="form-check-input" type="radio" name="question${i}" id="q${i}a" value="a">
+                            <label class="form-check-label" for="q${i}a">Option A</label>
+                        </div>
+                        <div class="form-check quiz-option">
+                            <input class="form-check-input" type="radio" name="question${i}" id="q${i}b" value="b">
+                            <label class="form-check-label" for="q${i}b">Option B</label>
+                        </div>
+                        <div class="form-check quiz-option">
+                            <input class="form-check-input" type="radio" name="question${i}" id="q${i}c" value="c">
+                            <label class="form-check-label" for="q${i}c">Option C</label>
+                        </div>
+                        <div class="form-check quiz-option">
+                            <input class="form-check-input" type="radio" name="question${i}" id="q${i}d" value="d">
+                            <label class="form-check-label" for="q${i}d">Option D</label>
+                        </div>
+                    `;
+                    quizContainer.appendChild(questionDiv);
+                }
+                
+                // Add click event to quiz options
+                document.querySelectorAll('.quiz-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        const radio = this.querySelector('input[type="radio"]');
+                        radio.checked = true;
+                        
+                        // Remove selected class from all options in the same question
+                        const questionName = radio.getAttribute('name');
+                        document.querySelectorAll(`input[name="${questionName}"]`).forEach(r => {
+                            r.closest('.quiz-option').classList.remove('selected');
+                        });
+                        
+                        // Add selected class to the clicked option
+                        this.classList.add('selected');
+                    });
+                });
+                
+                const quizModal = new bootstrap.Modal(document.getElementById('quizModal'));
+                quizModal.show();
+                
+                // Set submit button to save assessment result
+                document.getElementById('submitQuizBtn').setAttribute('data-assessment-id', assessmentId);
+            }
+        }
+
+        // View assessment
+        function viewAssessment(assessmentId) {
+            const assessments = JSON.parse(localStorage.getItem('assessments')) || [];
+            const assessment = assessments.find(a => a.id === assessmentId);
+            
+            if (assessment) {
+                showToast(`Viewing assessment: ${assessment.title}`, 'info');
+                // In a real application, this would navigate to an assessment detail page
+            }
+        }
+
+        // Load content
+        function loadContent(user) {
+            const content = JSON.parse(localStorage.getItem('content')) || [];
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const contentTableBody = document.getElementById('contentTableBody');
+            contentTableBody.innerHTML = '';
+            
+            let contentToShow = [];
+            
+            if (user.role === 'learner') {
+                // Show content for courses the learner is enrolled in
+                const enrolledCourses = courses.filter(c => c.enrolledUsers && c.enrolledUsers.includes(user.id));
+                const enrolledCourseIds = enrolledCourses.map(c => c.id);
+                contentToShow = content.filter(c => enrolledCourseIds.includes(c.courseId));
+            } else if (user.role === 'instructor') {
+                // Show content for courses the instructor is teaching
+                const instructorCourses = courses.filter(c => c.instructorId === user.id);
+                const instructorCourseIds = instructorCourses.map(c => c.id);
+                contentToShow = content.filter(c => instructorCourseIds.includes(c.courseId));
+            } else {
+                // Show all content for admin
+                contentToShow = content;
+            }
+            
+            contentToShow.forEach(item => {
+                const course = courses.find(c => c.id === item.courseId);
+                if (course) {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.name}</td>
+                        <td><span class="badge bg-${item.type === 'pdf' ? 'danger' : 'primary'}">${item.type.toUpperCase()}</span></td>
+                        <td>${item.size}</td>
+                        <td>${item.uploadDate}</td>
+                        <td>
+                            ${user.role === 'learner' ? 
+                                `<button class="btn btn-sm btn-outline-primary download-content-btn" data-content-id="${item.id}">Download</button>` :
+                                `<button class="btn btn-sm btn-outline-danger delete-content-btn" data-content-id="${item.id}">Delete</button>`
+                            }
+                        </td>
+                    `;
+                    contentTableBody.appendChild(row);
+                }
+            });
+            
+            // Add event listeners to download buttons
+            document.querySelectorAll('.download-content-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const contentId = parseInt(this.getAttribute('data-content-id'));
+                    downloadContent(contentId);
+                });
+            });
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-content-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const contentId = parseInt(this.getAttribute('data-content-id'));
+                    deleteContent(contentId);
+                });
+            });
+        }
+
+        // Download content
+        function downloadContent(contentId) {
+            const content = JSON.parse(localStorage.getItem('content')) || [];
+            const item = content.find(c => c.id === contentId);
+            
+            if (item) {
+                showToast(`Downloading ${item.name}...`, 'info');
+                // In a real application, this would trigger a file download
+            }
+        }
+
+        // Delete content
+        function deleteContent(contentId) {
+            if (confirm('Are you sure you want to delete this content?')) {
+                let content = JSON.parse(localStorage.getItem('content')) || [];
+                content = content.filter(c => c.id !== contentId);
+                localStorage.setItem('content', JSON.stringify(content));
+                
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                loadContent(currentUser);
+                
+                showToast('Content deleted successfully', 'success');
+            }
+        }
+
+        // Load gamification
+        function loadGamification(user) {
+            const badges = JSON.parse(localStorage.getItem('badges')) || [];
+            const userBadges = JSON.parse(localStorage.getItem('userBadges')) || [];
+            const userPoints = JSON.parse(localStorage.getItem('userPoints')) || [];
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            
+            // Load user badges
+            const userBadgesContainer = document.getElementById('userBadges');
+            userBadgesContainer.innerHTML = '';
+            
+            const earnedBadges = userBadges.filter(ub => ub.userId === user.id);
+            
+            if (earnedBadges.length > 0) {
+                earnedBadges.forEach(ub => {
+                    const badge = badges.find(b => b.id === ub.badgeId);
+                    if (badge) {
+                        const badgeItem = document.createElement('div');
+                        badgeItem.className = 'badge-item';
+                        badgeItem.innerHTML = `
+                            <i class="bi ${badge.icon} badge-icon" style="color: ${badge.color}"></i>
+                            <div>
+                                <h6 class="mb-0">${badge.name}</h6>
+                                <small class="text-muted">${badge.description}</small>
+                            </div>
+                        `;
+                        userBadgesContainer.appendChild(badgeItem);
+                    }
+                });
+            } else {
+                userBadgesContainer.innerHTML = '<p class="text-muted">No badges earned yet.</p>';
+            }
+            
+            // Load leaderboard
+            const leaderboardList = document.getElementById('leaderboardList');
+            leaderboardList.innerHTML = '';
+            
+            // Sort users by points
+            const sortedUsers = userPoints.sort((a, b) => b.points - a.points);
+            
+            sortedUsers.forEach((up, index) => {
+                const user = users.find(u => u.id === up.userId);
+                if (user) {
+                    const leaderboardItem = document.createElement('div');
+                    leaderboardItem.className = 'leaderboard-item';
+                    
+                    let rankClass = '';
+                    if (index === 0) rankClass = 'gold';
+                    else if (index === 1) rankClass = 'silver';
+                    else if (index === 2) rankClass = 'bronze';
+                    
+                    leaderboardItem.innerHTML = `
+                        <div class="leaderboard-rank ${rankClass}">${index + 1}</div>
+                        <img src="https://picsum.photos/seed/user${up.userId}/40/40.jpg" alt="${user.name}" class="user-avatar me-3">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">${user.name}</h6>
+                            <small class="text-muted">${user.role}</small>
+                        </div>
+                        <div class="text-end">
+                            <h5 class="mb-0">${up.points}</h5>
+                            <small class="text-muted">points</small>
+                        </div>
+                    `;
+                    leaderboardList.appendChild(leaderboardItem);
+                }
+            });
+            
+            // Load points history
+            const pointsHistoryTable = document.getElementById('pointsHistoryTable');
+            pointsHistoryTable.innerHTML = '';
+            
+            // Generate sample points history
+            const sampleHistory = [
+                { date: '2023-06-25', activity: 'Completed Module: JavaScript Basics', points: 50 },
+                { date: '2023-06-24', activity: 'Quiz Score: 85%', points: 30 },
+                { date: '2023-06-23', activity: 'Enrolled in Course: Advanced CSS', points: 10 },
+                { date: '2023-06-22', activity: 'Daily Login Streak: 7 days', points: 20 },
+                { date: '2023-06-21', activity: 'Completed Module: CSS Grid', points: 40 }
+            ];
+            
+            sampleHistory.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.date}</td>
+                    <td>${item.activity}</td>
+                    <td><span class="badge bg-success">+${item.points}</span></td>
+                `;
+                pointsHistoryTable.appendChild(row);
+            });
+        }
+
+        // Initialize charts
+        function initializeCharts(user) {
+            // Progress Chart
+            const progressCtx = document.getElementById('progressChart').getContext('2d');
+            new Chart(progressCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [{
+                        label: 'Learning Progress',
+                        data: [20, 35, 50, 75],
+                        backgroundColor: 'rgba(78, 115, 223, 0.2)',
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // Progress Overview Chart
+            const progressOverviewCtx = document.getElementById('progressOverviewChart').getContext('2d');
+            new Chart(progressOverviewCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['JavaScript', 'CSS', 'HTML', 'React', 'Node.js'],
+                    datasets: [{
+                        label: 'Completion %',
+                        data: [75, 40, 100, 20, 60],
+                        backgroundColor: [
+                            'rgba(78, 115, 223, 0.8)',
+                            'rgba(28, 200, 138, 0.8)',
+                            'rgba(54, 185, 204, 0.8)',
+                            'rgba(246, 194, 62, 0.8)',
+                            'rgba(231, 74, 59, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Course Modal
+        document.getElementById('addCourseBtn').addEventListener('click', function() {
+            document.getElementById('courseForm').reset();
+            document.getElementById('saveCourseBtn').textContent = 'Save Course';
+            document.getElementById('saveCourseBtn').removeAttribute('data-course-id');
+            
+            const courseModal = new bootstrap.Modal(document.getElementById('courseModal'));
+            courseModal.show();
+        });
+
+        document.getElementById('saveCourseBtn').addEventListener('click', function() {
+            const title = document.getElementById('courseTitle').value;
+            const description = document.getElementById('courseDescription').value;
+            const category = document.getElementById('courseCategory').value;
+            const duration = document.getElementById('courseDuration').value;
+            const difficulty = document.getElementById('courseDifficulty').value;
+            
+            if (!title || !description || !category || !duration || !difficulty) {
+                showToast('Please fill all fields', 'warning');
+                return;
+            }
+            
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            
+            const courseId = this.getAttribute('data-course-id');
+            
+            if (courseId) {
+                // Update existing course
+                const courseIndex = courses.findIndex(c => c.id === parseInt(courseId));
+                if (courseIndex !== -1) {
+                    courses[courseIndex] = {
+                        ...courses[courseIndex],
+                        title,
+                        description,
+                        category,
+                        duration: parseInt(duration),
+                        difficulty
+                    };
+                    showToast('Course updated successfully', 'success');
+                }
+            } else {
+                // Add new course
+                const newCourse = {
+                    id: courses.length > 0 ? Math.max(...courses.map(c => c.id)) + 1 : 1,
+                    title,
+                    description,
+                    category,
+                    duration: parseInt(duration),
+                    difficulty,
+                    instructorId: currentUser.id,
+                    enrolledUsers: []
+                };
+                courses.push(newCourse);
+                showToast('Course added successfully', 'success');
+            }
+            
+            localStorage.setItem('courses', JSON.stringify(courses));
+            
+            const courseModal = bootstrap.Modal.getInstance(document.getElementById('courseModal'));
+            courseModal.hide();
+            
+            loadCourses(currentUser);
+        });
+
+        // User Modal
+        document.getElementById('addUserBtn').addEventListener('click', function() {
+            document.getElementById('userForm').reset();
+            document.getElementById('saveUserBtn').textContent = 'Save User';
+            document.getElementById('saveUserBtn').removeAttribute('data-user-id');
+            
+            const userModal = new bootstrap.Modal(document.getElementById('userModal'));
+            userModal.show();
+        });
+
+        document.getElementById('saveUserBtn').addEventListener('click', function() {
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const password = document.getElementById('userPassword').value;
+            const role = document.getElementById('userRole').value;
+            
+            if (!name || !email || !password || !role) {
+                showToast('Please fill all fields', 'warning');
+                return;
+            }
+            
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            
+            const userId = this.getAttribute('data-user-id');
+            
+            if (userId) {
+                // Update existing user
+                const userIndex = users.findIndex(u => u.id === parseInt(userId));
+                if (userIndex !== -1) {
+                    users[userIndex] = {
+                        ...users[userIndex],
+                        name,
+                        email,
+                        role
+                    };
+                    showToast('User updated successfully', 'success');
+                }
+            } else {
+                // Add new user
+                const newUser = {
+                    id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                    name,
+                    email,
+                    password,
+                    role,
+                    status: 'active'
+                };
+                users.push(newUser);
+                
+                // Initialize user points
+                const userPoints = JSON.parse(localStorage.getItem('userPoints')) || [];
+                userPoints.push({ userId: newUser.id, points: 0 });
+                localStorage.setItem('userPoints', JSON.stringify(userPoints));
+                
+                showToast('User added successfully', 'success');
+            }
+            
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            const userModal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
+            userModal.hide();
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            loadUsers(currentUser);
+        });
+
+        // Assessment Modal
+        document.getElementById('addAssessmentBtn').addEventListener('click', function() {
+            document.getElementById('assessmentForm').reset();
+            document.getElementById('saveAssessmentBtn').textContent = 'Create Assessment';
+            
+            // Populate course options
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const assessmentCourse = document.getElementById('assessmentCourse');
+            assessmentCourse.innerHTML = '';
+            
+            let coursesToShow = [];
+            
+            if (currentUser.role === 'instructor') {
+                coursesToShow = courses.filter(c => c.instructorId === currentUser.id);
+            } else {
+                coursesToShow = courses;
+            }
+            
+            coursesToShow.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.id;
+                option.textContent = course.title;
+                assessmentCourse.appendChild(option);
+            });
+            
+            const assessmentModal = new bootstrap.Modal(document.getElementById('assessmentModal'));
+            assessmentModal.show();
+        });
+
+        document.getElementById('saveAssessmentBtn').addEventListener('click', function() {
+            const title = document.getElementById('assessmentTitle').value;
+            const courseId = document.getElementById('assessmentCourse').value;
+            const type = document.getElementById('assessmentType').value;
+            const duration = document.getElementById('assessmentDuration').value;
+            const questions = document.getElementById('assessmentQuestions').value;
+            
+            if (!title || !courseId || !type || !duration || !questions) {
+                showToast('Please fill all fields', 'warning');
+                return;
+            }
+            
+            const assessments = JSON.parse(localStorage.getItem('assessments')) || [];
+            
+            const newAssessment = {
+                id: assessments.length > 0 ? Math.max(...assessments.map(a => a.id)) + 1 : 1,
+                title,
+                courseId: parseInt(courseId),
+                type,
+                duration: parseInt(duration),
+                questions: parseInt(questions)
+            };
+            
+            assessments.push(newAssessment);
+            localStorage.setItem('assessments', JSON.stringify(assessments));
+            
+            showToast('Assessment created successfully', 'success');
+            
+            const assessmentModal = bootstrap.Modal.getInstance(document.getElementById('assessmentModal'));
+            assessmentModal.hide();
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            loadAssessments(currentUser);
+        });
+
+        // Submit Quiz
+        document.getElementById('submitQuizBtn').addEventListener('click', function() {
+            const assessmentId = parseInt(this.getAttribute('data-assessment-id'));
+            
+            // Calculate score (random for demo)
+            const score = Math.floor(Math.random() * 40) + 60; // Random score between 60-100
+            
+            // Award points based on score
+            const points = Math.floor(score / 10) * 5; // 5 points for every 10% score
+            
+            // Update user points
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            let userPoints = JSON.parse(localStorage.getItem('userPoints')) || [];
+            const userPointIndex = userPoints.findIndex(up => up.userId === currentUser.id);
+            
+            if (userPointIndex !== -1) {
+                userPoints[userPointIndex].points += points;
+            } else {
+                userPoints.push({ userId: currentUser.id, points });
+            }
+            
+            localStorage.setItem('userPoints', JSON.stringify(userPoints));
+            
+            // Show result
+            showToast(`Quiz submitted! Your score: ${score}%. You earned ${points} points.`, 'success');
+            
+            const quizModal = bootstrap.Modal.getInstance(document.getElementById('quizModal'));
+            quizModal.hide();
+            
+            // Update dashboard
+            loadDashboardData(currentUser);
+        });
+
+        // Content Upload Modal
+        document.getElementById('uploadContentBtn').addEventListener('click', function() {
+            document.getElementById('contentUploadForm').reset();
+            
+            // Populate course options
+            const courses = JSON.parse(localStorage.getItem('courses')) || [];
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const contentCourse = document.getElementById('contentCourse');
+            contentCourse.innerHTML = '';
+            
+            let coursesToShow = [];
+            
+            if (currentUser.role === 'instructor') {
+                coursesToShow = courses.filter(c => c.instructorId === currentUser.id);
+            } else {
+                coursesToShow = courses;
+            }
+            
+            coursesToShow.forEach(course => {
+                const option = document.createElement('option');
+                option.value = course.id;
+                option.textContent = course.title;
+                contentCourse.appendChild(option);
+            });
+            
+            const contentUploadModal = new bootstrap.Modal(document.getElementById('contentUploadModal'));
+            contentUploadModal.show();
+        });
+
+        document.getElementById('uploadContentSubmitBtn').addEventListener('click', function() {
+            const name = document.getElementById('contentName').value;
+            const courseId = document.getElementById('contentCourse').value;
+            const file = document.getElementById('contentFile').files[0];
+            
+            if (!name || !courseId || !file) {
+                showToast('Please fill all fields and select a file', 'warning');
+                return;
+            }
+            
+            const content = JSON.parse(localStorage.getItem('content')) || [];
+            
+            const newContent = {
+                id: content.length > 0 ? Math.max(...content.map(c => c.id)) + 1 : 1,
+                name,
+                courseId: parseInt(courseId),
+                type: file.type.includes('pdf') ? 'pdf' : file.type.includes('video') ? 'video' : 'other',
+                size: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+                uploadDate: new Date().toISOString().split('T')[0]
+            };
+            
+            content.push(newContent);
+            localStorage.setItem('content', JSON.stringify(content));
+            
+            showToast('Content uploaded successfully', 'success');
+            
+            const contentUploadModal = bootstrap.Modal.getInstance(document.getElementById('contentUploadModal'));
+            contentUploadModal.hide();
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            loadContent(currentUser);
+        });
+
+        // Toast notification
+        function showToast(message, type) {
+            const toastContainer = document.querySelector('.toast-container');
+            const toastId = 'toast-' + Date.now();
+            
+            const toast = document.createElement('div');
+            toast.className = `toast custom-toast align-items-center text-white bg-${type} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            toast.setAttribute('id', toastId);
+            
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+            
+            // Remove toast after it's hidden
+            toast.addEventListener('hidden.bs.toast', function() {
+                toast.remove();
+            });
+        }
+    </script>
+</body>
+</html>
